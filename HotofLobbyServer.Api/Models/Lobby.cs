@@ -8,7 +8,9 @@ public class Lobby
 
     public string HostIp { get; set; } = string.Empty;
 
-    public int CurrentPlayers { get; set; }
+    public List<LobbyPlayer> Players { get; set; } = new();
+
+    public int CurrentPlayers => Players.Count;
 
     public int MaxPlayers { get; set; }
 

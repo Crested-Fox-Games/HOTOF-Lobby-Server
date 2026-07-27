@@ -22,22 +22,29 @@ public class LobbyController : ControllerBase
         return Ok(lobbyService.GetLobbies());
     }
 
-    [HttpPost]
-    public IActionResult CreateLobby(CreateLobbyRequest request)
+    [HttpGet("{id}")]
+    public IActionResult GetLobby(Guid id)
     {
-        var lobby = lobbyService.CreateLobby(
-            request.Name,
-            request.HostIp,
-            request.MaxPlayers
-            );
+        Lobby? lobby = lobbyService.GetLobby(id);
+
+        if(lobby == null)
+            return NotFound();
+
+        return Ok(lobby);
+    }
+
+    [HttpPost]
+    public IActionResult CreateLobby([FromBody] CreateLobbyRequest request)
+    {
+        var lobby = lobbyService.CreateLobby(request);
 
         return Ok(lobby);
     }
 
     [HttpPost("{id}/join")]
-    public IActionResult JoinLobby(Guid id)
+    public IActionResult JoinLobby(Guid id, [FromBody] JoinLobbyRequest request)
     {
-        Lobby? lobby = lobbyService.JoinLobby(id);
+        Lobby? lobby = lobbyService.JoinLobby(id, request);
 
         if (lobby == null)
             return BadRequest("Unable to join lobby");
@@ -56,13 +63,4 @@ public class LobbyController : ControllerBase
 
         return Ok();
     }
-}
-
-public class CreateLobbyRequest
-{
-    public string Name { get; set; } = string.Empty;
-
-    public string HostIp {  get; set; } = string.Empty;
-
-    public int MaxPlayers { get; set; }
 }

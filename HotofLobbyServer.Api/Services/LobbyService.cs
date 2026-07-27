@@ -11,25 +11,36 @@ public class LobbyService
         return lobbies;
     }
 
-    public Lobby CreateLobby(string name, string hostIP, int maxPlayers)
+    public Lobby? GetLobby(Guid id)
+    {
+        return lobbies.FirstOrDefault(x => x.Id == id);
+    }
+
+    public Lobby CreateLobby(CreateLobbyRequest request)
     {
         Lobby lobby = new()
         {
             Id = Guid.NewGuid(),
-            Name = name,
-            HostIp = hostIP,
-            CurrentPlayers = 1,
-            MaxPlayers = maxPlayers,
+            Name = request.Name,
+            HostIp = request.HostIp,
+            MaxPlayers = request.MaxPlayers,
             InGame = false,
             lastHeartbeat = DateTime.UtcNow
         };
+
+        lobby.Players.Add(new LobbyPlayer
+        {
+            Id = request.PlayerId,
+            Name = request.PlayerName,
+            isHost = true,
+        });
 
         lobbies.Add(lobby);
 
         return lobby;
     }
 
-    public Lobby? JoinLobby(Guid id)
+    public Lobby? JoinLobby(Guid id, JoinLobbyRequest request)
     {
         //Searches for lobby
         Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
@@ -42,8 +53,12 @@ public class LobbyService
         if (lobby.CurrentPlayers >= lobby.MaxPlayers)
             return null;
 
-        //Adds a player
-        lobby.CurrentPlayers++;
+        lobby.Players.Add(new LobbyPlayer
+        {
+            Id = request.PlayerId,
+            Name = request.PlayerName,
+            isHost = false
+        });
 
         //Returns the lobby
         return lobby;
@@ -56,13 +71,13 @@ public class LobbyService
         if(lobby == null) 
             return false;
 
-        lobby.CurrentPlayers--;
-
         //If no players left in lobby, remove lobby
         if(lobby.CurrentPlayers <= 0)
         {
             lobbies.Remove(lobby);
         }
+
+        //TODO: Remove player from the list
 
         return true;
     }
