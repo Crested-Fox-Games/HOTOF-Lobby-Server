@@ -1,0 +1,6 @@
+@HotofLobbyServer.Api_HostAddress = http://localhost:5038
+
+GET {{HotofLobbyServer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
