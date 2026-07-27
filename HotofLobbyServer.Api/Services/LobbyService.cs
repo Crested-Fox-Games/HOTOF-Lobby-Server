@@ -64,21 +64,27 @@ public class LobbyService
         return lobby;
     }
 
-    public bool LeaveLobby(Guid id)
+    public Lobby? LeaveLobby(Guid lobbyId, LeaveLobbyRequest request)
     {
-        Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
+        Lobby? lobby = GetLobby(lobbyId);
 
-        if(lobby == null) 
-            return false;
+        if(lobby == null)
+            return null;
 
-        //If no players left in lobby, remove lobby
-        if(lobby.CurrentPlayers <= 0)
+        LobbyPlayer? player = lobby.Players.FirstOrDefault(player => player.Id == request.PlayerId);
+        
+        if(player == null)
+            return null;
+
+        if(player.isHost)
         {
             lobbies.Remove(lobby);
+
+            return null;
         }
 
-        //TODO: Remove player from the list
+        lobby.Players.Remove(player);
 
-        return true;
+        return lobby;
     }
 }

@@ -54,13 +54,13 @@ public class LobbyController : ControllerBase
     }
 
     [HttpPost("{id}/leave")]
-    public IActionResult LeaveLobby(Guid id)
+    public IActionResult LeaveLobby(Guid id, [FromBody] LeaveLobbyRequest request)
     {
-        bool success = lobbyService.LeaveLobby(id);
+        Lobby? lobby = lobbyService.LeaveLobby(id, request);
 
-        if (!success)
-            return BadRequest("Lobby not found");
+        if (lobby == null)
+            return NotFound();
 
-        return Ok();
+        return Ok(lobby);
     }
 }
