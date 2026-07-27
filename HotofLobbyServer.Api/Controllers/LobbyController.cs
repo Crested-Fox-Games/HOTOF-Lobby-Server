@@ -1,3 +1,4 @@
+using HotofLobbyServer.Api.Models;
 using HotofLobbyServer.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,29 @@ public class LobbyController : ControllerBase
             );
 
         return Ok(lobby);
+    }
+
+    [HttpPost("{id}/join")]
+    public IActionResult JoinLobby(Guid id)
+    {
+        Lobby? lobby = lobbyService.JoinLobby(id);
+
+        if (lobby == null)
+            return BadRequest("Unable to join lobby");
+
+        return Ok(lobby);
+
+    }
+
+    [HttpPost("{id}/leave")]
+    public IActionResult LeaveLobby(Guid id)
+    {
+        bool success = lobbyService.LeaveLobby(id);
+
+        if (!success)
+            return BadRequest("Lobby not found");
+
+        return Ok();
     }
 }
 

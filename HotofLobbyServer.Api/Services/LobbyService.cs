@@ -28,4 +28,42 @@ public class LobbyService
 
         return lobby;
     }
+
+    public Lobby? JoinLobby(Guid id)
+    {
+        //Searches for lobby
+        Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
+
+        //Checks to see if it exists
+        if (lobby == null)
+            return null;
+
+        //Checks to ensure not at max players
+        if (lobby.CurrentPlayers >= lobby.MaxPlayers)
+            return null;
+
+        //Adds a player
+        lobby.CurrentPlayers++;
+
+        //Returns the lobby
+        return lobby;
+    }
+
+    public bool LeaveLobby(Guid id)
+    {
+        Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
+
+        if(lobby == null) 
+            return false;
+
+        lobby.CurrentPlayers--;
+
+        //If no players left in lobby, remove lobby
+        if(lobby.CurrentPlayers <= 0)
+        {
+            lobbies.Remove(lobby);
+        }
+
+        return true;
+    }
 }
