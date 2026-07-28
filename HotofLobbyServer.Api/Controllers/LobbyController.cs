@@ -81,4 +81,26 @@ public class LobbyController : ControllerBase
 
         return Ok(lobby);
     }
+
+    [HttpPost("{id}/start")]
+    public IActionResult StartGame(Guid id)
+    {
+        Lobby? lobby = lobbyService.GetLobby(id);
+
+        if (lobby == null)
+            return NotFound();
+
+        LobbyPlayer? host = lobby.Players.FirstOrDefault(p => p.isHost);
+
+        if (host == null)
+            return BadRequest("No host found");
+
+        //NOTE: Not using this in testing, but is useful for actual game
+        //if (lobby.Players.Any(p => !p.isReady))
+        //    return BadRequest("Not all players ready");
+
+        lobby.InGame = true;
+
+        return Ok(lobby);
+    }
 }
