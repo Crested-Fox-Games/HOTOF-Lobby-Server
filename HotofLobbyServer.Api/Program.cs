@@ -10,6 +10,11 @@ builder.Services.AddSingleton<LobbyService>();
 
 builder.Services.AddHostedService<LobbyCleanupService>();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5038);
+});
+
 var app = builder.Build();
 
 app.MapControllers();
