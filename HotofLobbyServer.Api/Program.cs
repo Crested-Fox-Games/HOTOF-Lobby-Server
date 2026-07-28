@@ -12,7 +12,7 @@ builder.Services.AddHostedService<LobbyCleanupService>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5038);
+    options.ListenAnyIP(8080);
 });
 
 var app = builder.Build();
