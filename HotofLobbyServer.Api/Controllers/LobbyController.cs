@@ -44,12 +44,12 @@ public class LobbyController : ControllerBase
     [HttpPost("{id}/join")]
     public IActionResult JoinLobby(Guid id, [FromBody] JoinLobbyRequest request)
     {
-        Lobby? lobby = lobbyService.JoinLobby(id, request);
+        LobbyResponse? response = lobbyService.JoinLobby(id, request);
 
-        if (lobby == null)
+        if (response == null)
             return BadRequest("Unable to join lobby");
 
-        return Ok(lobby);
+        return Ok(response);
 
     }
 
@@ -62,5 +62,23 @@ public class LobbyController : ControllerBase
             return NotFound();
 
         return Ok(lobby);
+    }
+
+    [HttpPost("{id}/ready")]
+    public IActionResult Ready(Guid id, [FromBody] ReadyRequest request)
+    {
+        Lobby? lobby = lobbyService.GetLobby(id);
+
+        if(lobby == null)
+            return NotFound();
+
+        LobbyPlayer? player = lobby.Players.FirstOrDefault(p => p.Id == request.PlayerId);
+
+        if (player == null)
+            return NotFound();
+
+        player.isReady = request.IsReady;
+
+        return Ok(player);
     }
 }

@@ -16,7 +16,7 @@ public class LobbyService
         return lobbies.FirstOrDefault(x => x.Id == id);
     }
 
-    public Lobby CreateLobby(CreateLobbyRequest request)
+    public LobbyResponse CreateLobby(CreateLobbyRequest request)
     {
         Lobby lobby = new()
         {
@@ -28,19 +28,26 @@ public class LobbyService
             lastHeartbeat = DateTime.UtcNow
         };
 
-        lobby.Players.Add(new LobbyPlayer
+        LobbyPlayer player = new LobbyPlayer
         {
-            Id = request.PlayerId,
+            Id = Guid.NewGuid(),
             Name = request.PlayerName,
-            isHost = true,
-        });
+            isHost = true
+        };
 
         lobbies.Add(lobby);
 
-        return lobby;
+        lobby.Players.Add(player);
+
+        //Returns the lobby
+        return new LobbyResponse
+        {
+            Lobby = lobby,
+            PlayerId = player.Id
+        };
     }
 
-    public Lobby? JoinLobby(Guid id, JoinLobbyRequest request)
+    public LobbyResponse? JoinLobby(Guid id, JoinLobbyRequest request)
     {
         //Searches for lobby
         Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
@@ -53,15 +60,21 @@ public class LobbyService
         if (lobby.CurrentPlayers >= lobby.MaxPlayers)
             return null;
 
-        lobby.Players.Add(new LobbyPlayer
+        LobbyPlayer player = new LobbyPlayer
         {
-            Id = request.PlayerId,
+            Id = Guid.NewGuid(),
             Name = request.PlayerName,
             isHost = false
-        });
+        };
+
+        lobby.Players.Add(player);
 
         //Returns the lobby
-        return lobby;
+        return new LobbyResponse
+        {
+            Lobby = lobby,
+            PlayerId = player.Id
+        };
     }
 
     public Lobby? LeaveLobby(Guid lobbyId, LeaveLobbyRequest request)
