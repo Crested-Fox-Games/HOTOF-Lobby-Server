@@ -8,6 +8,8 @@ builder.Services.AddControllers();
 //Add lobby services as a singleton as we only want one
 builder.Services.AddSingleton<LobbyService>();
 
+builder.Services.AddHostedService<LobbyCleanupService>();
+
 var app = builder.Build();
 
 app.MapControllers();

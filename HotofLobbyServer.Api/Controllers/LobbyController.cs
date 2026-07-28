@@ -103,4 +103,15 @@ public class LobbyController : ControllerBase
 
         return Ok(lobby);
     }
+
+    [HttpPost("{id}/heartbeat")]
+    public IActionResult Heartbeat(Guid id)
+    {
+        bool success = lobbyService.Heartbeat(id);
+
+        if (!success)
+            return NotFound();
+
+        return Ok();
+    }
 }

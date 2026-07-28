@@ -100,4 +100,24 @@ public class LobbyService
 
         return lobby;
     }
+
+    public bool Heartbeat(Guid id)
+    {
+        Lobby? lobby = lobbies.FirstOrDefault(x => x.Id == id);
+
+        //Checks to see if it exists
+        if (lobby == null)
+            return false;
+
+        lobby.lastHeartbeat = DateTime.UtcNow;
+
+        return true;
+    }
+
+    public void CleanupLobbies()
+    {
+        DateTime timeout = DateTime.UtcNow.AddSeconds(-15);
+
+        lobbies.RemoveAll(lobby => lobby.lastHeartbeat < timeout);
+    }
 }
