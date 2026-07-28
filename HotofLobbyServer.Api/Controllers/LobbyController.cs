@@ -79,6 +79,6 @@ public class LobbyController : ControllerBase
 
         player.isReady = request.IsReady;
 
-        return Ok(player);
+        return Ok(lobby);
     }
 }
