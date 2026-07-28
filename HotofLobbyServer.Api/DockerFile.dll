@@ -14,4 +14,4 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "HotofLobbyServer.dll"]
+ENTRYPOINT ["dotnet", "HotofLobbyServer.dll"] 
